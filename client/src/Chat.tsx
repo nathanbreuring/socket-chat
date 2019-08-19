@@ -15,6 +15,7 @@ const Chat: React.FC<IProps> = props => {
     if (e.key === "Enter") {
       if (userName !== "" || userMsg !== "") {
         props.handler.message(userName, userMsg);
+        setUserMsg("");
       }
     }
   };
