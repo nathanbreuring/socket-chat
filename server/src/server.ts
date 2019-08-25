@@ -2,17 +2,67 @@ import Koa from "koa";
 import Http from "http";
 import Socketio from "socket.io";
 
+/** TODO:
+ *  - Add type to message payload
+ *  - Add type to privateMessage payload
+ */
+
 const app = new Koa();
 const server = Http.createServer(app.callback());
 const io = Socketio(server);
+const connectedClients = [];
+
+const addClient = (id, userName) => {
+  connectedClients.push({ id, userName });
+};
+
+const removeClient = id => {
+  const i = connectedClients.findIndex(c => c.id === id);
+  connectedClients.splice(i);
+};
 
 io.on("connection", function(client) {
   client.on("message", function(payload) {
     io.emit("message", payload);
   });
 
+  client.on("privateMessage", function(payload) {
+    const user1 = payload.userPair.user1;
+    const user2 = payload.userPair.user2;
+
+    // Emit the message only to the 2 involved recipients
+    io.to(user1.id)
+      .to(user2.id)
+      .emit("privateMessage", {
+        userPair: { user1, user2 },
+        user: payload.user,
+        userMsg: payload.userMsg
+      });
+  });
+
   client.on("disconnect", function() {
-    console.log("client disconnect...", client.id);
+    const user = connectedClients.find(c => c.id === client.id);
+    if (!!user && !!user.userName) {
+      io.emit("leave", user.userName);
+      removeClient(client.id);
+    }
+  });
+
+  client.on("leave", function(userName) {
+    removeClient(client.id);
+    io.emit("updateUsers", connectedClients);
+    io.emit("leave", userName);
+  });
+
+  client.on("enter", function(userName) {
+    // User enters server, here its name is mapped to an id
+    addClient(client.id, userName);
+    // The user object is send back to the client
+    io.to(client.id).emit("updateUser", { id: client.id, userName });
+    // Update the logged-in userlist in the client
+    io.emit("updateUsers", connectedClients);
+    // And emit a message about user entering
+    io.emit("enter", userName);
   });
 
   client.on("error", function(err) {

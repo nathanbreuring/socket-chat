@@ -1,22 +1,37 @@
 import React, { useState } from "react";
 import { Button, Input, InputLabel } from "@material-ui/core";
-import { IPayload } from "./App";
+import { IPayload, IUser } from "./interfaces";
 
 interface IProps {
+  isPrivate?: boolean;
   handler: any;
-  chatHistory: IPayload[];
+  user: IUser | null;
+  selectedUser: IUser | null;
+  chatHistory?: IPayload[];
 }
 
 const Chat: React.FC<IProps> = props => {
   const [userMsg, setUserMsg] = useState("");
-  const [userName, setUserName] = useState("");
 
   const keyPress = e => {
     if (e.key === "Enter") {
-      if (userName !== "" || userMsg !== "") {
-        props.handler.message(userName, userMsg);
+      if (userMsg !== "" && props.user) {
+        sendMessage();
         setUserMsg("");
       }
+    }
+  };
+
+  const sendMessage = () => {
+    if (props.user) {
+      props.isPrivate
+        ? props.handler.privateMessage({
+            userPair: { user1: props.user, user2: props.selectedUser },
+            user: props.user,
+            userMsg
+          })
+        : props.handler.message(props.user.userName, userMsg);
+      setUserMsg("");
     }
   };
 
@@ -25,31 +40,30 @@ const Chat: React.FC<IProps> = props => {
       style={{
         display: "flex",
         flexDirection: "column",
-        padding: "2em"
+        padding: "2em",
+        width: "80%"
       }}
     >
-      <InputLabel>Username</InputLabel>
-      <Input
-        style={{ marginTop: "1em" }}
-        value={userName}
-        onChange={e => setUserName(e.target.value)}
-      />
-      <InputLabel style={{ marginTop: "2em" }}>Chat</InputLabel>
-      <div
+      {!props.isPrivate && (
+        <InputLabel style={{ marginTop: "2em" }}>Chat</InputLabel>
+      )}
+      <section
         style={{
           height: 540,
           border: "2px solid black",
-          marginTop: "1em"
+          marginTop: "1em",
+          overflowY: "auto"
         }}
       >
         <div style={{ padding: "1em" }}>
-          {props.chatHistory.map((line: IPayload, i) => (
-            <InputLabel key={`${line.userName}:${i}`}>
-              {line.userName}: {line.message}
-            </InputLabel>
-          ))}
+          {props.chatHistory &&
+            props.chatHistory.map((line: IPayload, i) => (
+              <InputLabel key={`${line.userName}:${i}`}>
+                {line.userName}: {line.message}
+              </InputLabel>
+            ))}
         </div>
-      </div>
+      </section>
       <InputLabel style={{ marginTop: "2em" }}>Message</InputLabel>
       <Input
         style={{ marginTop: "1em" }}
@@ -59,10 +73,10 @@ const Chat: React.FC<IProps> = props => {
       />
       <Button
         onClick={() => {
-          props.handler.message(userName, userMsg);
+          sendMessage();
           setUserMsg("");
         }}
-        disabled={userName === "" || userMsg === ""}
+        disabled={userMsg === ""}
       >
         Send
       </Button>
