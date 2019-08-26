@@ -8,16 +8,16 @@ interface IProps {
   privChatPair: IPrivateChat;
   updateSelectedUser: (user: IUser | null) => void;
   open: boolean;
+  onClose: (v: boolean) => void;
   selectedUser: IUser | null;
   user: IUser | null;
-  updateIsPrivateChatOpen: (v: boolean) => void;
 }
 
 const PrivateChatDialog: React.FC<IProps> = props => {
   return (
-    <Dialog open={props.open} onClose={props.updateIsPrivateChatOpen}>
+    <Dialog open={props.open} onClose={props.onClose}>
       <DialogTitle
-        onClick={() => props.updateIsPrivateChatOpen(false)}
+        onClick={() => props.onClose(false)}
         style={{
           display: "flex",
           flexDirection: "row",
@@ -27,7 +27,7 @@ const PrivateChatDialog: React.FC<IProps> = props => {
         Private chat
         <Button
           onClick={() => {
-            props.updateIsPrivateChatOpen(false);
+            props.onClose(false);
           }}
         >
           X
@@ -61,7 +61,7 @@ const PrivateChatDialog: React.FC<IProps> = props => {
         <Button
           onClick={() => {
             props.updateSelectedUser(null);
-            props.updateIsPrivateChatOpen(false);
+            props.onClose(false);
           }}
         >
           CLOSE

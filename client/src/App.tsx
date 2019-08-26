@@ -54,7 +54,7 @@ class App extends React.PureComponent<IProps, IState> {
       }));
     };
 
-    // TODO: give type
+    // TODO: type
     const updatePrivateHistory = (payload: any) => {
       const user1 = payload.userPair.user1;
       const user2 = payload.userPair.user2;
@@ -78,7 +78,7 @@ class App extends React.PureComponent<IProps, IState> {
           privChatHistory: [...prevState.privChatHistory, initPrivChat]
         }));
       } else {
-        // Add message to existing userpair
+        // Add message to chathistory from existing userpair
         privPairChat.chatHistory.push({
           userName: payload.user.userName,
           message: payload.userMsg
@@ -138,8 +138,8 @@ class App extends React.PureComponent<IProps, IState> {
           openPrivateChat={this.updateIsPrivateChatOpen}
         />
         <PrivateChatDialog
+          onClose={() => this.updateIsPrivateChatOpen(false)}
           open={this.state.isPrivateChatOpen}
-          updateIsPrivateChatOpen={this.updateIsPrivateChatOpen}
           updateSelectedUser={this.updateSelectedUser}
           user={this.state.user}
           selectedUser={this.state.selectedUser}
