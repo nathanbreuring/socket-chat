@@ -1,6 +1,6 @@
 import React from "react";
 import { IPrivateChat, IUser } from "./interfaces";
-import { Dialog, DialogTitle, DialogContent, Button } from "@material-ui/core";
+import { Dialog, DialogTitle, DialogContent } from "@material-ui/core";
 import Chat from "./Chat";
 
 interface IProps {
