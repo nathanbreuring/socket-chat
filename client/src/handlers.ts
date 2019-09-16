@@ -1,7 +1,7 @@
 import Socketio from "socket.io-client";
 import { IUpdateChat } from "./interfaces";
 
-export const handler = (updateChat: IUpdateChat) => {
+export const socketHandler = (updateChat: IUpdateChat) => {
   const socket = Socketio.connect("http://localhost:3100");
 
   // listeners - incoming events

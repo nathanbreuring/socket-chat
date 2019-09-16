@@ -5,7 +5,7 @@ import { IUser } from "./interfaces";
 interface IProps {
   users: IUser[];
   user: IUser | null;
-  openPrivateChat: (v: boolean) => void;
+  openPrivateChat: (open: boolean) => void;
   updateSelectedUser: (user: IUser) => void;
 }
 

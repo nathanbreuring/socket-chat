@@ -5,7 +5,7 @@ import Chat from "./Chat";
 
 interface IProps {
   handler: any;
-  privChatPair: IPrivateChat;
+  chatHistory: IPrivateChat;
   updateSelectedUser: (user: IUser | null) => void;
   open: boolean;
   onClose: (v: boolean) => void;
@@ -25,13 +25,6 @@ const PrivateChatDialog: React.FC<IProps> = props => {
         }}
       >
         Private chat
-        <Button
-          onClick={() => {
-            props.onClose(false);
-          }}
-        >
-          X
-        </Button>
       </DialogTitle>
       <DialogContent
         style={{
@@ -45,27 +38,10 @@ const PrivateChatDialog: React.FC<IProps> = props => {
         <Chat
           isPrivate
           handler={props.handler}
-          chatHistory={
-            props.privChatPair ? props.privChatPair.chatHistory : []
-            // [
-            //   // TODO: base on prop
-            //   {
-            //     userName: !!props.user ? props.user.userName : "noName",
-            //     message: "blah"
-            //   }
-            // ]
-          }
+          chatHistory={props.chatHistory ? props.chatHistory.chatHistory : []}
           user={props.user}
           selectedUser={props.selectedUser}
         />
-        <Button
-          onClick={() => {
-            props.updateSelectedUser(null);
-            props.onClose(false);
-          }}
-        >
-          CLOSE
-        </Button>
       </DialogContent>
     </Dialog>
   );

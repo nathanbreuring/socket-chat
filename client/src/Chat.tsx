@@ -6,7 +6,7 @@ interface IProps {
   isPrivate?: boolean;
   handler: any;
   user: IUser | null;
-  selectedUser: IUser | null;
+  selectedUser?: IUser | null;
   chatHistory?: IPayload[];
 }
 
@@ -66,6 +66,7 @@ const Chat: React.FC<IProps> = props => {
       </section>
       <InputLabel style={{ marginTop: "2em" }}>Message</InputLabel>
       <Input
+        autoFocus
         style={{ marginTop: "1em" }}
         onChange={e => setUserMsg(e.target.value)}
         onKeyPress={keyPress}

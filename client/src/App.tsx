@@ -1,5 +1,5 @@
 import React from "react";
-import { handler } from "./handlers";
+import { socketHandler } from "./handlers";
 import Chat from "./Chat";
 import Users from "./Users";
 import SignIn from "./SignIn";
@@ -48,14 +48,13 @@ class App extends React.PureComponent<IProps, IState> {
       this.setState({ user });
     };
 
-    const updateHistory = (payload: IPayload) => {
+    const updateHistory = payload => {
       this.setState(prevState => ({
         chatHistory: [...prevState.chatHistory, payload]
       }));
     };
 
-    // TODO: type
-    const updatePrivateHistory = (payload: any) => {
+    const updatePrivateHistory = payload => {
       const user1 = payload.userPair.user1;
       const user2 = payload.userPair.user2;
 
@@ -110,7 +109,7 @@ class App extends React.PureComponent<IProps, IState> {
     await this.setState({ selectedUser });
   };
 
-  handler = handler(this.updateChat());
+  socketHandler = socketHandler(this.updateChat());
 
   render() {
     const i = this.getIndexPrivateChat(
@@ -120,15 +119,17 @@ class App extends React.PureComponent<IProps, IState> {
 
     if (!this.state.isSignedIn)
       return (
-        <SignIn handler={this.handler} setIsSignedIn={this.updateIsSignedIn} />
+        <SignIn
+          handler={this.socketHandler}
+          setIsSignedIn={this.updateIsSignedIn}
+        />
       );
 
     return (
       <div style={{ display: "flex", flexDirection: "row" }}>
         <Chat
           user={this.state.user}
-          selectedUser={this.state.selectedUser}
-          handler={this.handler}
+          handler={this.socketHandler}
           chatHistory={this.state.chatHistory}
         />
         <Users
@@ -143,8 +144,8 @@ class App extends React.PureComponent<IProps, IState> {
           updateSelectedUser={this.updateSelectedUser}
           user={this.state.user}
           selectedUser={this.state.selectedUser}
-          handler={this.handler}
-          privChatPair={this.state.privChatHistory[i]}
+          handler={this.socketHandler}
+          chatHistory={this.state.privChatHistory[i]}
         />
       </div>
     );
