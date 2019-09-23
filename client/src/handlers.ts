@@ -5,7 +5,7 @@ export const socketHandler = (updateChat: IUpdateChat) => {
   const socket = Socketio.connect("http://localhost:3100");
 
   // listeners - incoming events
-  socket.on("error", function(err: any) {
+  socket.on("error", function(err) {
     console.log("Error:", err);
   });
 
