@@ -2,11 +2,6 @@ import Koa from "koa";
 import Http from "http";
 import Socketio from "socket.io";
 
-/** TODO:
- *  - Add type to message payload
- *  - Add type to privateMessage payload
- */
-
 const app = new Koa();
 const server = Http.createServer(app.callback());
 const io = Socketio(server);
@@ -18,7 +13,7 @@ const addClient = (id, userName) => {
 
 const removeClient = id => {
   const i = connectedClients.findIndex(c => c.id === id);
-  connectedClients.splice(i);
+  connectedClients.splice(i, i + 1);
 };
 
 io.on("connection", function(client) {
@@ -45,13 +40,8 @@ io.on("connection", function(client) {
     if (!!user && !!user.userName) {
       io.emit("leave", user.userName);
       removeClient(client.id);
+      io.emit("updateUsers", connectedClients);
     }
-  });
-
-  client.on("leave", function(userName) {
-    removeClient(client.id);
-    io.emit("updateUsers", connectedClients);
-    io.emit("leave", userName);
   });
 
   client.on("enter", function(userName) {
